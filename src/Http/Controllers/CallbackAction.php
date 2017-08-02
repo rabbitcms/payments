@@ -3,10 +3,12 @@ declare(strict_types=1);
 
 namespace RabbitCMS\Payments\Http\Controllers;
 
+use Illuminate\Support\Facades\Request;
+use Psr\Http\Message\ResponseInterface;
+use Psr\Http\Message\ServerRequestInterface;
 use RabbitCMS\Payments\Factory;
 use Exception;
 use Illuminate\Contracts\Debug\ExceptionHandler;
-use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Illuminate\Routing\Controller;
 
@@ -18,16 +20,16 @@ use Illuminate\Routing\Controller;
 class CallbackAction extends Controller
 {
     /**
-     * @param Request          $request
-     * @param Factory          $payments
-     * @param ExceptionHandler $handler
+     * @param ServerRequestInterface $request
+     * @param Factory                $payments
+     * @param ExceptionHandler       $handler
      *
-     * @return Response
+     * @return Response|ResponseInterface
      */
-    public function __invoke(Request $request, Factory $payments, ExceptionHandler $handler)
+    public function __invoke(ServerRequestInterface $request, Factory $payments, ExceptionHandler $handler)
     {
         try {
-            return $payments->driver($request->route('shop'))->callback($request);
+            return $payments->driver((string)Request::route('shop'))->callback($request);
         } catch (Exception $exception) {
             $handler->report($exception);
             return new Response($exception->getMessage(), 500);

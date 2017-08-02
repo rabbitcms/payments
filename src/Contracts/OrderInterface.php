@@ -20,5 +20,10 @@ interface OrderInterface
     /**
      * @return PaymentInterface
      */
-    public function getPayment():PaymentInterface;
+    public function getPayment(): PaymentInterface;
+
+    /**
+     * @return string
+     */
+    public function getOrderId(): string;
 }

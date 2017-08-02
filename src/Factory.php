@@ -4,12 +4,17 @@ declare(strict_types=1);
 namespace RabbitCMS\Payments;
 
 use Illuminate\Support\Manager;
+use Monolog\Handler\RotatingFileHandler;
+use Monolog\Logger;
 use RabbitCMS\Modules\Support\ModuleDetect;
+use RabbitCMS\Payments\Contracts\InvoiceInterface;
+use RabbitCMS\Payments\Contracts\PaymentProviderInterface;
 
 /**
  * Class Factory
  *
  * @package DtKt\Payments
+ * @method PaymentProviderInterface driver($driver = null)
  */
 class Factory extends Manager
 {
@@ -44,7 +49,14 @@ class Factory extends Manager
         // will check for a custom driver creator, which allows developers to create
         // drivers using their own customized driver creator Closure to create it.
         if (isset($this->customCreators[$provider])) {
-            return $this->callCustomCreator($provider, $config);
+            return tap(
+                $this->callCustomCreator($provider, $config),
+                function (PaymentProviderInterface $provider) use ($driver) {
+                    $provider->setLogger(
+                        new Logger($driver, [new RotatingFileHandler(storage_path("logs/{$driver}.log"))])
+                    );
+                }
+            );
         }
         throw new InvalidArgumentException("Driver [$driver] not supported.");
     }
@@ -60,5 +72,13 @@ class Factory extends Manager
     protected function callCustomCreator($driver, array $config = [])
     {
         return $this->customCreators[$driver]($this->app, $config);
+    }
+
+    /**
+     * @param InvoiceInterface $invoice
+     */
+    public function process(InvoiceInterface $invoice)
+    {
+        //todo
     }
 }

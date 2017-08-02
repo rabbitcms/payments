@@ -5,13 +5,14 @@ namespace RabbitCMS\Payments\Contracts;
 
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
+use Psr\Log\LoggerAwareInterface;
 
 /**
  * Interface PaymentProviderInterface
  *
  * @package DtKt\Payments\Contracts
  */
-interface PaymentProviderInterface
+interface PaymentProviderInterface extends LoggerAwareInterface
 {
     /**
      * @return string
