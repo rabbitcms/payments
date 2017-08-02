@@ -20,11 +20,10 @@ interface PaymentProviderInterface
 
     /**
      * @param OrderInterface   $order
-     * @param PaymentInterface $payment
      *
      * @return ActionInterface
      */
-    public function createPayment(OrderInterface $order, PaymentInterface $payment): ActionInterface;
+    public function createPayment(OrderInterface $order): ActionInterface;
 
     /**
      * @param ServerRequestInterface $request

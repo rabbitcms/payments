@@ -22,4 +22,14 @@ interface TransactionInterface
      * @return int
      */
     public function getStatus(): int;
+
+    /**
+     * @return OrderInterface
+     */
+    public function getOrder(): OrderInterface;
+
+    /**
+     * @return int
+     */
+    public function getId(): int;
 }

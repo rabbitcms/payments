@@ -16,4 +16,9 @@ interface OrderInterface
      * @return void
      */
     public function paymentStatus(TransactionInterface $transaction);
+
+    /**
+     * @return PaymentInterface
+     */
+    public function getPayment():PaymentInterface;
 }
