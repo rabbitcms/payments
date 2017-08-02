@@ -1,0 +1,19 @@
+<?php
+declare(strict_types=1);
+
+namespace RabbitCMS\Payments\Contracts;
+
+/**
+ * Interface OrderInterface
+ *
+ * @package RabbitCMS\Payments\Contracts
+ */
+interface OrderInterface
+{
+    /**
+     * @param TransactionInterface $transaction
+     *
+     * @return void
+     */
+    public function paymentStatus(TransactionInterface $transaction);
+}

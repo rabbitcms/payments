@@ -1,0 +1,23 @@
+{
+    "name": "rabbitcms/payments",
+    "authors": [
+        {
+            "name": "Kulyk Dmytro",
+            "email": "lnkvisitor.ts@gmail.com"
+        }
+    ],
+    "require": {
+        "rabbitcms/modules": "^1.5.1",
+        "illuminate/support": "^5.4.0"
+    },
+    "autoload": {
+        "psr-4": {
+            "RabbitCMS\\Payments\\": "src/"
+        }
+    },
+    "extra": {
+        "module": {
+            "providers": "RabbitCMS\\Payments\\ModuleProvider"
+        }
+    }
+}
