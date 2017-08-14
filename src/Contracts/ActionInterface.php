@@ -10,17 +10,12 @@ use JsonSerializable;
  *
  * @package RabbitCMS\Payments\Contracts
  */
-interface ActionInterface extends JsonSerializable
+interface ActionInterface extends ContinuableInterface, JsonSerializable
 {
     const ACTION_OPEN = 'OPEN';
 
     const METHOD_GET = 'GET';
     const METHOD_POST = 'POST';
-
-    /**
-     * @return PaymentProviderInterface
-     */
-    public function getProvider(): PaymentProviderInterface;
 
     /**
      * @return string

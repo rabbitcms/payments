@@ -6,9 +6,9 @@ namespace RabbitCMS\Payments;
 use Illuminate\Support\Manager;
 use Monolog\Handler\RotatingFileHandler;
 use Monolog\Logger;
-use RabbitCMS\Modules\Support\ModuleDetect;
 use RabbitCMS\Payments\Contracts\InvoiceInterface;
 use RabbitCMS\Payments\Contracts\PaymentProviderInterface;
+use RabbitCMS\Payments\Entities\Transaction;
 
 /**
  * Class Factory
@@ -18,10 +18,6 @@ use RabbitCMS\Payments\Contracts\PaymentProviderInterface;
  */
 class Factory extends Manager
 {
-    use ModuleDetect;
-
-    protected $resolvers = [];
-
     /**
      * Get the default driver name.
      *
@@ -44,11 +40,16 @@ class Factory extends Manager
     protected function createDriver($driver)
     {
         $config = config("module.payments.{$driver}", []);
+        if (is_string($config)) {
+            return $this->createDriver($config);
+        }
         $provider = $config['provider'] ?? null;
+
         // We'll check to see if a creator method exists for the given driver. If not we
         // will check for a custom driver creator, which allows developers to create
         // drivers using their own customized driver creator Closure to create it.
         if (isset($this->customCreators[$provider])) {
+            $config['shop'] = $driver;
             return tap(
                 $this->callCustomCreator($provider, $config),
                 function (PaymentProviderInterface $provider) use ($driver) {
@@ -64,14 +65,14 @@ class Factory extends Manager
     /**
      * Call a custom driver creator.
      *
-     * @param string $driver
+     * @param string $provider
      * @param array  $config
      *
      * @return mixed
      */
-    protected function callCustomCreator($driver, array $config = [])
+    protected function callCustomCreator($provider, array $config = [])
     {
-        return $this->customCreators[$driver]($this->app, $config);
+        return $this->customCreators[$provider]($this, $config);
     }
 
     /**
@@ -79,6 +80,106 @@ class Factory extends Manager
      */
     public function process(InvoiceInterface $invoice)
     {
-        //todo
+        /* @var Transaction $transaction */
+        $transaction = Transaction::query()
+            ->where('driver', $invoice->getProvider()->getShop())
+            ->findOrFail($invoice->getTransactionId());
+
+        $transaction->getConnection()->transaction(function () use ($invoice, $transaction) {
+            switch ($invoice->getStatus()) {
+                case 'failure':
+                    if ($transaction->status === Transaction::STATUS_FAILURE) {
+                        return;
+                    }
+                    $transaction->update([
+                        //'error' => $params['err_description'],
+                        'status' => Transaction::STATUS_FAILURE,
+                        'invoice' => $invoice->getInvoice(),
+                        'result_at' => new DateTime('now')
+                    ]);
+
+                    break;
+                case InvoiceInterface::STATUS_SUCCESSFUL:
+//                    if ($transaction->type === Transaction::TYPE_SUBSCRIBE) {
+//                        $trans = Transaction::query()->where(['invoice' => $params['payment_id']])->first();
+//                        if ($trans !== null) {
+//                            //Already exists.
+//                            return;
+//                        }
+//                        $trans = new Transaction();
+//                        $trans->subscribe()->associate($transaction);
+//                        $trans->order()->associate($transaction->order);
+//                        $trans->fill([
+//                            'type' => Transaction::TYPE_PAYMENT,
+//                            'status' => Transaction::STATUS_SUCCESSFUL,
+//                            'invoice' => $params['payment_id'],
+//                            'result_at' => new DateTime('now')
+//                        ]);
+//                        $trans->save();
+//                        $transaction = $trans;
+//                        break;
+//                    }
+                    if ($transaction->status === Transaction::STATUS_SUCCESSFUL) {
+                        return;
+                    }
+
+                    $transaction->update([
+                        'status' => Transaction::STATUS_SUCCESSFUL,
+                        'invoice' => $invoice->getInvoice(),
+                        'result_at' => new DateTime('now')
+                    ]);
+                    break;
+                case 'reversed':
+                case 'refund':
+                    $trans = new Transaction();
+                    $trans->parent()->associate($transaction);
+                    $trans->order()->associate($transaction->order);
+                    $trans->fill([
+                        'type' => Transaction::TYPE_PAYMENT,
+                        'status' => Transaction::STATUS_REFUND,
+                        'invoice' => $invoice->getInvoice(),
+                        'result_at' => new DateTime('now')
+                    ]);
+                    $trans->save();
+                    $transaction = $trans;
+                    break;
+//                case 'subscribed':
+//                    if ($transaction->status === Transaction::STATUS_SUBSCRIBED) {
+//                        return;
+//                    }
+//                    $transaction->update([
+//                        'status' => Transaction::STATUS_SUBSCRIBED,
+//                        'invoice' => $params['payment_id'],
+//                        'result_at' => new DateTime('now')
+//                    ]);
+//                    break;
+//                case 'unsubscribed':
+//                    if ($transaction->status === Transaction::STATUS_UNSUBSCRIBED) {
+//                        return;
+//                    }
+//                    $transaction->update([
+//                        'status' => Transaction::STATUS_UNSUBSCRIBED
+//                    ]);
+//                    $trans = new Transaction();
+//                    $trans->subscribe()->associate($transaction);
+//                    $trans->order()->associate($transaction->order);
+//                    $trans->fill([
+//                        'type' => Transaction::TYPE_UNSUBSCRIBE,
+//                        'status' => Transaction::STATUS_UNSUBSCRIBED,
+//                        'invoice' => $params['payment_id'],
+//                        'result_at' => new DateTime('now')
+//                    ]);
+//                    $trans->save();
+//                    $transaction = $trans;
+//                    break;
+                default:
+                    $transaction->update([
+                        'status' => Transaction::STATUS_UNKNOWN,
+                        //'options' => $params
+                    ]);
+            }
+
+            $transaction->order->paymentStatus($transaction);
+        });
     }
 }

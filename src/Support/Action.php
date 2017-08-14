@@ -99,9 +99,9 @@ class Action implements ActionInterface
     /**
      * @param mixed $method
      *
-     * @return ActionInterface
+     * @return Action
      */
-    public function setMethod($method): ActionInterface
+    public function setMethod($method): Action
     {
         $this->method = $method;
         return $this;
@@ -110,9 +110,9 @@ class Action implements ActionInterface
     /**
      * @param string $url
      *
-     * @return ActionInterface
+     * @return Action
      */
-    public function setUrl(string $url): ActionInterface
+    public function setUrl(string $url): Action
     {
         $this->url = $url;
         return $this;
@@ -121,9 +121,9 @@ class Action implements ActionInterface
     /**
      * @param array $data
      *
-     * @return ActionInterface
+     * @return Action
      */
-    public function setData(array $data): ActionInterface
+    public function setData(array $data): Action
     {
         $this->data = $data;
         return $this;
@@ -136,6 +136,7 @@ class Action implements ActionInterface
     {
         return [
             'provider' => $this->getProvider()->getProviderName(),
+            'shop' => $this->getProvider()->getShop(),
             'action' => $this->getAction(),
             'method' => $this->getMethod(),
             'url' => $this->getUrl(),

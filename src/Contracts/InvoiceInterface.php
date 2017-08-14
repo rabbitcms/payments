@@ -8,8 +8,24 @@ namespace RabbitCMS\Payments\Contracts;
  *
  * @package RabbitCMS\Payments\Contracts
  */
-interface InvoiceInterface
+interface InvoiceInterface extends ContinuableInterface
 {
+    const TYPE_PAYMENT = 1;
+    const TYPE_REFUND = 2;
+
+    const STATUS_PENDING = 0;
+    const STATUS_SUCCESSFUL = 1;
+    const STATUS_REFUND = 2;
+
+    const STATUS_FAILURE = 127;
+    const STATUS_CANCELED = 128;
+    const STATUS_UNKNOWN = 255;
+
+    /**
+     * @return int
+     */
+    public function getType(): int;
+
     /**
      * @return string
      */
@@ -23,10 +39,10 @@ interface InvoiceInterface
     /**
      * @return string
      */
-    public function getOrderId(): string;
+    public function getTransactionId(): string;
 
     /**
-     * @return PaymentProviderInterface
+     * @return int
      */
-    public function getProvider(): PaymentProviderInterface;
+    public function getStatus(): int;
 }

@@ -28,6 +28,16 @@ interface ClientInterface
     /**
      * @return string
      */
+    public function getEmail(): string;
+
+    /**
+     * @return string
+     */
+    public function getPhone(): string;
+
+    /**
+     * @return string
+     */
     public function getCountry(): string;
 
     /**

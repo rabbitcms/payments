@@ -25,6 +25,13 @@ interface PaymentInterface
     public function getProduct();
 
     /**
+     * Get card id for payment.
+     *
+     * @return int|null
+     */
+    public function getCardId();
+
+    /**
      * Get amount.
      *
      * @return float
@@ -50,4 +57,9 @@ interface PaymentInterface
      * @return string
      */
     public function getLanguage(): string;
+
+    /**
+     * @return string
+     */
+    public function getReturnUrl(): string;
 }

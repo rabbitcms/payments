@@ -26,7 +26,7 @@ class Invoice implements InvoiceInterface
     /**
      * @var string
      */
-    protected $orderId;
+    protected $transactionId;
 
     /**
      * @var float
@@ -34,19 +34,39 @@ class Invoice implements InvoiceInterface
     protected $amount;
 
     /**
+     * @var int
+     */
+    private $type;
+
+    /**
+     * @var int
+     */
+    private $status;
+
+    /**
      * Invoice constructor.
      *
      * @param PaymentProviderInterface $provider
      * @param string                   $invoice
-     * @param string                   $orderId
+     * @param string                   $transactionId
+     * @param int                      $type
+     * @param int                      $status
      * @param float                    $amount
      */
-    public function __construct(PaymentProviderInterface $provider, string $invoice, string $orderId, float $amount)
-    {
+    public function __construct(
+        PaymentProviderInterface $provider,
+        string $invoice,
+        string $transactionId,
+        int $type,
+        int $status,
+        float $amount
+    ) {
         $this->provider = $provider;
         $this->invoice = $invoice;
-        $this->orderId = $orderId;
+        $this->transactionId = $transactionId;
         $this->amount = $amount;
+        $this->type = $type;
+        $this->status = $status;
     }
 
     /**
@@ -68,9 +88,9 @@ class Invoice implements InvoiceInterface
     /**
      * @return string
      */
-    public function getOrderId(): string
+    public function getTransactionId(): string
     {
-        return $this->orderId;
+        return $this->transactionId;
     }
 
     /**
@@ -79,5 +99,43 @@ class Invoice implements InvoiceInterface
     public function getProvider(): PaymentProviderInterface
     {
         return $this->provider;
+    }
+
+    /**
+     * @return int
+     */
+    public function getType(): int
+    {
+        return $this->type;
+    }
+
+    /**
+     * @return int
+     */
+    public function getStatus(): int
+    {
+        return $this->status;
+    }
+
+    /**
+     * @param int $type
+     *
+     * @return Invoice
+     */
+    public function setType(int $type): Invoice
+    {
+        $this->type = $type;
+        return $this;
+    }
+
+    /**
+     * @param int $status
+     *
+     * @return Invoice
+     */
+    public function setStatus(int $status): Invoice
+    {
+        $this->status = $status;
+        return $this;
     }
 }

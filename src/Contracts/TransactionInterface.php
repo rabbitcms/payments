@@ -8,28 +8,10 @@ namespace RabbitCMS\Payments\Contracts;
  *
  * @package RabbitCMS\Payments\Contracts
  */
-interface TransactionInterface
+interface TransactionInterface extends InvoiceInterface
 {
-    const STATUS_PENDING = 0;
-    const STATUS_SUCCESSFUL = 1;
-    const STATUS_REFUND = 2;
-
-    const STATUS_FAILURE = 127;
-    const STATUS_CANCELED = 128;
-    const STATUS_UNKNOWN = 255;
-
-    /**
-     * @return int
-     */
-    public function getStatus(): int;
-
     /**
      * @return OrderInterface
      */
     public function getOrder(): OrderInterface;
-
-    /**
-     * @return int
-     */
-    public function getId(): int;
 }

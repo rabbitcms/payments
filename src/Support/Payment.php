@@ -51,6 +51,16 @@ class Payment implements PaymentInterface
     protected $language = '';
 
     /**
+     * @var string
+     */
+    protected $returnUrl = '';
+
+    /**
+     * @var int|null
+     */
+    protected $cardId;
+
+    /**
      * Payment constructor.
      *
      * @param string $currency
@@ -157,6 +167,46 @@ class Payment implements PaymentInterface
     public function setLanguage(string $language): Payment
     {
         $this->language = $language;
+        return $this;
+    }
+
+    /**
+     * @param string $returnUrl
+     *
+     * @return Payment
+     */
+    public function setReturnUrl(string $returnUrl): Payment
+    {
+        $this->returnUrl = $returnUrl;
+        return $this;
+    }
+
+    /**
+     * @return string
+     */
+    public function getReturnUrl(): string
+    {
+        return $this->returnUrl;
+    }
+
+    /**
+     * Get card id for payment.
+     *
+     * @return int|null
+     */
+    public function getCardId()
+    {
+        return $this->cardId;
+    }
+
+    /**
+     * @param int $cardId
+     *
+     * @return Payment
+     */
+    public function setCardId(int $cardId): Payment
+    {
+        $this->cardId = $cardId;
         return $this;
     }
 }

@@ -48,6 +48,16 @@ class Client implements ClientInterface
     protected $postalCode = '';
 
     /**
+     * @var string
+     */
+    protected $email = '';
+
+    /**
+     * @var string
+     */
+    protected $phone = '';
+
+    /**
      * Client constructor.
      *
      * @param string $id
@@ -159,5 +169,43 @@ class Client implements ClientInterface
     {
         $this->postalCode = $postalCode;
         return $this;
+    }
+
+    /**
+     * @param string $email
+     *
+     * @return Client
+     */
+    public function setEmail(string $email): Client
+    {
+        $this->email = $email;
+        return $this;
+    }
+
+    /**
+     * @return string
+     */
+    public function getEmail(): string
+    {
+        return $this->email;
+    }
+
+    /**
+     * @param string $phone
+     *
+     * @return Client
+     */
+    public function setPhone(string $phone): Client
+    {
+        $this->phone = $phone;
+        return $this;
+    }
+
+    /**
+     * @return string
+     */
+    public function getPhone(): string
+    {
+        return $this->phone;
     }
 }

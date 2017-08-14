@@ -20,11 +20,16 @@ interface PaymentProviderInterface extends LoggerAwareInterface
     public function getProviderName(): string;
 
     /**
-     * @param OrderInterface   $order
-     *
-     * @return ActionInterface
+     * @return string
      */
-    public function createPayment(OrderInterface $order): ActionInterface;
+    public function getShop(): string;
+
+    /**
+     * @param OrderInterface $order
+     *
+     * @return ContinuableInterface
+     */
+    public function createPayment(OrderInterface $order): ContinuableInterface;
 
     /**
      * @param ServerRequestInterface $request

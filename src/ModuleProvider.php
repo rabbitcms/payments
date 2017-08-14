@@ -23,6 +23,14 @@ class ModuleProvider extends ServiceProvider
         });
         $this->app->alias('payments', Factory::class);
 
+        $path = dirname(__DIR__) . '/config/payments.php';
+
+        if (is_file($path)) {
+            $this->mergeConfigFrom($path, 'payments');
+
+            $this->publishes([$path => config_path('payments.php')]);
+        }
+
         $path = dirname(__DIR__) . '/config/config.php';
 
         if (is_file($path)) {
