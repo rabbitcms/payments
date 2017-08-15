@@ -9,6 +9,7 @@ use Monolog\Logger;
 use RabbitCMS\Payments\Contracts\InvoiceInterface;
 use RabbitCMS\Payments\Contracts\PaymentProviderInterface;
 use RabbitCMS\Payments\Entities\Transaction;
+use InvalidArgumentException;
 
 /**
  * Class Factory
