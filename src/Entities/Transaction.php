@@ -3,6 +3,7 @@ declare(strict_types=1);
 
 namespace RabbitCMS\Payments\Entities;
 
+use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\MorphTo;
@@ -24,8 +25,9 @@ use RabbitCMS\Payments\Factory;
  * @property-read int              $parent_id
  * @property-read Transaction|null $parent
  * @property-read OrderInterface   $order
- *
- *
+ * @property-read string           $invoice
+ * @property-read float            $amount
+ * @property-read Carbon|null      $processed_at
  */
 class Transaction extends Model implements TransactionInterface
 {
@@ -93,7 +95,7 @@ class Transaction extends Model implements TransactionInterface
      */
     public function getInvoice(): string
     {
-
+        return (string)$this->invoice;
     }
 
     /**
@@ -101,7 +103,7 @@ class Transaction extends Model implements TransactionInterface
      */
     public function getAmount(): float
     {
-        // TODO: Implement getAmount() method.
+        return $this->amount;
     }
 
     /**
@@ -109,7 +111,7 @@ class Transaction extends Model implements TransactionInterface
      */
     public function getTransactionId(): string
     {
-       return (string)$this->id;
+        return (string)$this->id;
     }
 
     /**

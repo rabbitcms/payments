@@ -17,7 +17,7 @@ use RabbitCMS\Payments\Facade\Payments;
  * @property-read string $client
  * @property-read string $card
  * @property-read string $token
- * @proeprty-read array $data
+ * @property-read array $data
  */
 class CardToken extends Model implements CardTokenInterface
 {
