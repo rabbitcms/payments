@@ -40,7 +40,7 @@ class Factory extends Manager
      */
     protected function createDriver($driver)
     {
-        $config = config("module.payments.{$driver}", []);
+        $config = config("payments.{$driver}", []);
         if (is_string($config)) {
             return $this->createDriver($config);
         }
