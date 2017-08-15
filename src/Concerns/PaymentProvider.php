@@ -4,6 +4,7 @@ declare(strict_types=1);
 namespace RabbitCMS\Payments\Concerns;
 
 use Illuminate\Contracts\Container\Container;
+use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\URL;
 use RabbitCMS\Payments\Factory;
 
