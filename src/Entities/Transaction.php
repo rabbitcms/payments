@@ -36,8 +36,9 @@ class Transaction extends Model implements TransactionInterface
     protected $fillable = [
         'driver',
         'status',
+        'type',
         'amount',
-        'invoice'
+        'invoice',
     ];
 
     protected $casts = [
