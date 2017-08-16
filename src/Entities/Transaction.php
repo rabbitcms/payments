@@ -7,12 +7,10 @@ use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\MorphTo;
-use function PHPSTORM_META\type;
 use RabbitCMS\Payments\Contracts\OrderInterface;
 use RabbitCMS\Payments\Contracts\PaymentProviderInterface;
 use RabbitCMS\Payments\Contracts\TransactionInterface;
 use RabbitCMS\Payments\Facade\Payments;
-use RabbitCMS\Payments\Factory;
 
 /**
  * Class Transaction
@@ -20,6 +18,7 @@ use RabbitCMS\Payments\Factory;
  * @package RabbitCMS\Payments\Entities
  * @property-read int              $id
  * @property-read string           $driver
+ * @property-read string           $client
  * @property-read int              $status
  * @property-read int              $type
  * @property-read int              $parent_id
@@ -35,6 +34,7 @@ class Transaction extends Model implements TransactionInterface
 
     protected $fillable = [
         'driver',
+        'client',
         'status',
         'type',
         'amount',

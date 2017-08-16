@@ -20,6 +20,7 @@ class CreatePaymentsTransactionsTable extends Migration
         Schema::create('payments_transactions', function (Blueprint $table) {
             $table->increments('id');
             $table->string('driver');
+            $table->string('client');
             $table->unsignedTinyInteger('status');
             $table->unsignedTinyInteger('type');
             $table->unsignedInteger('card_id')->nullable();
