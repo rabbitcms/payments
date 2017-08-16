@@ -27,6 +27,7 @@ use RabbitCMS\Payments\Facade\Payments;
  * @property-read string           $invoice
  * @property-read float            $amount
  * @property-read Carbon|null      $processed_at
+ * @property-read int|null         $card_id
  */
 class Transaction extends Model implements TransactionInterface
 {
@@ -65,7 +66,15 @@ class Transaction extends Model implements TransactionInterface
      */
     public function parent(): BelongsTo
     {
-        return $this->belongsTo(Transaction::class, 'parent_id');
+        return $this->belongsTo(self::class, 'parent_id');
+    }
+
+    /**
+     * @return BelongsTo
+     */
+    public function card(): BelongsTo
+    {
+        return $this->belongsTo(CardToken::class, 'card_id');
     }
 
     /**
@@ -122,5 +131,13 @@ class Transaction extends Model implements TransactionInterface
     public function getProvider(): PaymentProviderInterface
     {
         return Payments::driver($this->driver);
+    }
+
+    /**
+     * @return int|null
+     */
+    public function getCardId()
+    {
+        return $this->card_id;
     }
 }

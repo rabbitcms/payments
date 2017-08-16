@@ -3,6 +3,7 @@ declare(strict_types=1);
 
 namespace RabbitCMS\Payments\Support;
 
+use RabbitCMS\Payments\Contracts\CardTokenInterface;
 use RabbitCMS\Payments\Contracts\InvoiceInterface;
 use RabbitCMS\Payments\Contracts\PaymentProviderInterface;
 
@@ -42,6 +43,11 @@ class Invoice implements InvoiceInterface
      * @var int
      */
     private $status;
+
+    /**
+     * @var CardTokenInterface|null
+     */
+    protected $card;
 
     /**
      * Invoice constructor.
@@ -136,6 +142,25 @@ class Invoice implements InvoiceInterface
     public function setStatus(int $status): Invoice
     {
         $this->status = $status;
+        return $this;
+    }
+
+    /**
+     * @return CardTokenInterface|null
+     */
+    public function getCard()
+    {
+        return $this->card;
+    }
+
+    /**
+     * @param null|CardTokenInterface $card
+     *
+     * @return Invoice
+     */
+    public function setCard(CardTokenInterface $card): Invoice
+    {
+        $this->card = $card;
         return $this;
     }
 }

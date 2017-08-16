@@ -11,6 +11,11 @@ namespace RabbitCMS\Payments\Contracts;
 interface CardTokenInterface
 {
     /**
+     * @return int
+     */
+    public function getId(): int;
+
+    /**
      * @return PaymentProviderInterface
      */
     public function getProvider(): PaymentProviderInterface;

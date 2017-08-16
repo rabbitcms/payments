@@ -45,4 +45,9 @@ interface InvoiceInterface extends ContinuableInterface
      * @return int
      */
     public function getStatus(): int;
+
+    /**
+     * @return CardTokenInterface|null
+     */
+    public function getCard();
 }

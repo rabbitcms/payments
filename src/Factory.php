@@ -8,6 +8,7 @@ use Monolog\Handler\RotatingFileHandler;
 use Monolog\Logger;
 use RabbitCMS\Payments\Contracts\InvoiceInterface;
 use RabbitCMS\Payments\Contracts\PaymentProviderInterface;
+use RabbitCMS\Payments\Entities\CardToken;
 use RabbitCMS\Payments\Entities\Transaction;
 use InvalidArgumentException;
 use DateTime;
@@ -123,6 +124,19 @@ class Factory extends Manager
 //                    }
                     if ($transaction->status === Transaction::STATUS_SUCCESSFUL) {
                         return;
+                    }
+
+                    $card = $invoice->getCard();
+                    if ($card) {
+                        $newCard = new CardToken([
+                            'card'=>$card->getCard(),
+                            'token'=>$card->getToken(),
+                            'data'=>$card->getData(),
+                            'client'=>$transaction->client,
+                            'driver'=>$transaction->driver
+                        ]);
+                        $newCard->save();
+                        $transaction->card()->associate($newCard);
                     }
 
                     $transaction->update([

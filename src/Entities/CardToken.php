@@ -76,4 +76,12 @@ class CardToken extends Model implements CardTokenInterface
     {
         return $this->data ?? [];
     }
+
+    /**
+     * @return int
+     */
+    public function getId(): int
+    {
+        return (int)$this->getKey();
+    }
 }
