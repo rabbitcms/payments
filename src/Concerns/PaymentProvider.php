@@ -6,6 +6,10 @@ namespace RabbitCMS\Payments\Concerns;
 use Illuminate\Contracts\Container\Container;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\URL;
+use RabbitCMS\Payments\Contracts\OrderInterface;
+use RabbitCMS\Payments\Contracts\PaymentInterface;
+use RabbitCMS\Payments\Contracts\TransactionInterface;
+use RabbitCMS\Payments\Entities\Transaction;
 use RabbitCMS\Payments\Factory;
 
 /**
@@ -62,5 +66,28 @@ trait PaymentProvider
     protected function getCallbackUrl(): string
     {
         return URL::route('payments.callback', ['shop' => $this->getShop()]);
+    }
+
+    /**
+     * @param OrderInterface   $order
+     * @param PaymentInterface $payment
+     *
+     * @return TransactionInterface
+     */
+    protected function makeTransaction(OrderInterface $order, PaymentInterface $payment): TransactionInterface
+    {
+        $transaction = new Transaction([
+            'type' => Transaction::TYPE_PAYMENT,
+            'status' => Transaction::STATUS_PENDING,
+            'amount' => $payment->getAmount(),
+            'driver' => $this->getShop(),
+            'client' => $payment->getClient()->getId()
+        ]);
+
+        $transaction->order()->associate($order);
+
+        $transaction->save();
+
+        return $transaction;
     }
 }
