@@ -7,6 +7,7 @@ use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\MorphTo;
+use RabbitCMS\Payments\Contracts\CardTokenInterface;
 use RabbitCMS\Payments\Contracts\OrderInterface;
 use RabbitCMS\Payments\Contracts\PaymentProviderInterface;
 use RabbitCMS\Payments\Contracts\TransactionInterface;
@@ -28,6 +29,7 @@ use RabbitCMS\Payments\Facade\Payments;
  * @property-read float            $amount
  * @property-read Carbon|null      $processed_at
  * @property-read int|null         $card_id
+ * @property-read CardToken|null   $card
  */
 class Transaction extends Model implements TransactionInterface
 {
@@ -139,5 +141,13 @@ class Transaction extends Model implements TransactionInterface
     public function getCardId()
     {
         return $this->card_id;
+    }
+
+    /**
+     * @return CardTokenInterface|null
+     */
+    public function getCard()
+    {
+        return $this->card;
     }
 }
