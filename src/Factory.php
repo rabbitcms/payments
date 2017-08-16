@@ -10,6 +10,7 @@ use RabbitCMS\Payments\Contracts\InvoiceInterface;
 use RabbitCMS\Payments\Contracts\PaymentProviderInterface;
 use RabbitCMS\Payments\Entities\Transaction;
 use InvalidArgumentException;
+use DateTime;
 
 /**
  * Class Factory
@@ -96,7 +97,7 @@ class Factory extends Manager
                         //'error' => $params['err_description'],
                         'status' => Transaction::STATUS_FAILURE,
                         'invoice' => $invoice->getInvoice(),
-                        'result_at' => new DateTime('now')
+                        'processed_at' => new DateTime('now')
                     ]);
 
                     break;
@@ -127,7 +128,7 @@ class Factory extends Manager
                     $transaction->update([
                         'status' => Transaction::STATUS_SUCCESSFUL,
                         'invoice' => $invoice->getInvoice(),
-                        'result_at' => new DateTime('now')
+                        'processed_at' => new DateTime('now')
                     ]);
                     break;
                 case 'reversed':
@@ -139,7 +140,7 @@ class Factory extends Manager
                         'type' => Transaction::TYPE_PAYMENT,
                         'status' => Transaction::STATUS_REFUND,
                         'invoice' => $invoice->getInvoice(),
-                        'result_at' => new DateTime('now')
+                        'processed_at' => new DateTime('now')
                     ]);
                     $trans->save();
                     $transaction = $trans;

@@ -39,6 +39,7 @@ class Transaction extends Model implements TransactionInterface
         'type',
         'amount',
         'invoice',
+        'processed_at'
     ];
 
     protected $casts = [
