@@ -32,6 +32,14 @@ class Factory extends Manager
     }
 
     /**
+     * @return string[]
+     */
+    public function all():array
+    {
+        return array_keys($this->customCreators);
+    }
+
+    /**
      * Create a new driver instance.
      *
      * @param  string $driver
