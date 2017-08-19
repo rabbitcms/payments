@@ -36,7 +36,7 @@ class Factory extends Manager
      */
     public function all():array
     {
-        return array_keys($this->customCreators);
+        return array_keys(config('payments', []));
     }
 
     /**
@@ -50,9 +50,12 @@ class Factory extends Manager
      */
     protected function createDriver($driver)
     {
-        $config = config("payments.{$driver}", []);
+        $config = config("payments.{$driver}", null);
         if (is_string($config)) {
             return $this->createDriver($config);
+        }
+        if ($config === null) {
+            throw new InvalidArgumentException("Driver [$driver] not supported.");
         }
         $provider = $config['provider'] ?? null;
 
@@ -70,7 +73,7 @@ class Factory extends Manager
                 }
             );
         }
-        throw new InvalidArgumentException("Driver [$driver] not supported.");
+        throw new InvalidArgumentException("Provider [$provider] not supported.");
     }
 
     /**
