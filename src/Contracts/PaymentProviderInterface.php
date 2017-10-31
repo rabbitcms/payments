@@ -39,4 +39,9 @@ interface PaymentProviderInterface extends LoggerAwareInterface
      * @return ResponseInterface
      */
     public function callback(ServerRequestInterface $request): ResponseInterface;
+
+    /**
+     * @return bool
+     */
+    public function isValid(): bool;
 }
