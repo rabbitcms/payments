@@ -8,7 +8,7 @@
         }
     ],
     "require": {
-        "rabbitcms/modules": "^1.5.1",
+        "rabbitcms/modules": "^1.5.1 | ^2.0",
         "illuminate/support": "^5.4.0",
         "illuminate/database": "^5.4.0",
         "psr/log": "^1.0",
