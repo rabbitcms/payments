@@ -26,7 +26,7 @@ class CallbackAction extends Controller
      *
      * @return Response|ResponseInterface
      */
-    public function __invoke(ServerRequestInterface $request, Factory $payments, ExceptionHandler $handler)
+    public function handle(ServerRequestInterface $request, Factory $payments, ExceptionHandler $handler)
     {
         try {
             return $payments->driver((string)Request::route('shop'))->callback($request);
