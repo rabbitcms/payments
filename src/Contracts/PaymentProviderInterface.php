@@ -26,12 +26,12 @@ interface PaymentProviderInterface extends LoggerAwareInterface
 
     /**
      * @param OrderInterface $order
-     *
      * @param callable|null  $callback
+     * @param array          $options
      *
      * @return ContinuableInterface
      */
-    public function createPayment(OrderInterface $order, callable $callback = null): ContinuableInterface;
+    public function createPayment(OrderInterface $order, callable $callback = null, array $options = []): ContinuableInterface;
 
     /**
      * @param ServerRequestInterface $request

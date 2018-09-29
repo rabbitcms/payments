@@ -71,17 +71,19 @@ trait PaymentProvider
     /**
      * @param OrderInterface   $order
      * @param PaymentInterface $payment
+     * @param array            $options
      *
      * @return TransactionInterface
      */
-    protected function makeTransaction(OrderInterface $order, PaymentInterface $payment): TransactionInterface
+    protected function makeTransaction(OrderInterface $order, PaymentInterface $payment, array $options = []): TransactionInterface
     {
         $transaction = new Transaction([
             'type' => Transaction::TYPE_PAYMENT,
             'status' => Transaction::STATUS_PENDING,
             'amount' => $payment->getAmount(),
             'driver' => $this->getShop(),
-            'client' => $payment->getClient()->getId()
+            'client' => $payment->getClient()->getId(),
+            'options' => $options,
         ]);
 
         $transaction->order()->associate($order);

@@ -27,6 +27,7 @@ use RabbitCMS\Payments\Facade\Payments;
  * @property-read OrderInterface   $order
  * @property-read string           $invoice
  * @property-read float            $amount
+ * @property-read array            $options
  * @property-read Carbon|null      $processed_at
  * @property-read int|null         $card_id
  * @property-read CardToken|null   $card
@@ -42,13 +43,15 @@ class Transaction extends Model implements TransactionInterface
         'type',
         'amount',
         'invoice',
-        'processed_at'
+        'processed_at',
+        'options',
     ];
 
     protected $casts = [
         'status' => 'int',
         'type' => 'int',
-        'amount' => 'float'
+        'amount' => 'float',
+        'options' => 'array',
     ];
 
     protected $attributes = [
@@ -93,6 +96,14 @@ class Transaction extends Model implements TransactionInterface
     public function getOrder(): OrderInterface
     {
         return $this->order()->getResults();
+    }
+
+    /**
+     * @return array
+     */
+    public function getOptions(): array
+    {
+        return $this->options ?? [];
     }
 
     /**

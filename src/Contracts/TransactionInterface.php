@@ -14,4 +14,11 @@ interface TransactionInterface extends InvoiceInterface
      * @return OrderInterface
      */
     public function getOrder(): OrderInterface;
+
+    /**
+     * Get transaction options.
+     *
+     * @return array
+     */
+    public function getOptions(): array;
 }
