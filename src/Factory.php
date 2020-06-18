@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace RabbitCMS\Payments;
@@ -34,7 +35,7 @@ class Factory extends Manager
     /**
      * @return string[]
      */
-    public function all():array
+    public function all(): array
     {
         return array_keys(config('payments', []));
     }
@@ -42,7 +43,7 @@ class Factory extends Manager
     /**
      * Create a new driver instance.
      *
-     * @param  string $driver
+     * @param  string  $driver
      *
      * @return mixed
      *
@@ -64,6 +65,7 @@ class Factory extends Manager
         // drivers using their own customized driver creator Closure to create it.
         if (isset($this->customCreators[$provider])) {
             $config['shop'] = $driver;
+
             return tap(
                 $this->callCustomCreator($provider, $config),
                 function (PaymentProviderInterface $provider) use ($driver) {
@@ -79,8 +81,8 @@ class Factory extends Manager
     /**
      * Call a custom driver creator.
      *
-     * @param string $provider
-     * @param array  $config
+     * @param  string  $provider
+     * @param  array  $config
      *
      * @return mixed
      */
@@ -90,7 +92,7 @@ class Factory extends Manager
     }
 
     /**
-     * @param InvoiceInterface $invoice
+     * @param  InvoiceInterface  $invoice
      */
     public function process(InvoiceInterface $invoice)
     {
@@ -101,7 +103,7 @@ class Factory extends Manager
 
         $transaction->getConnection()->transaction(function () use ($invoice, $transaction) {
             switch ($invoice->getStatus()) {
-                case 'failure':
+                case InvoiceInterface::STATUS_FAILURE:
                     if ($transaction->status === Transaction::STATUS_FAILURE) {
                         return;
                     }
@@ -109,7 +111,7 @@ class Factory extends Manager
                         //'error' => $params['err_description'],
                         'status' => Transaction::STATUS_FAILURE,
                         'invoice' => $invoice->getInvoice(),
-                        'processed_at' => new DateTime('now')
+                        'processed_at' => new DateTime('now'),
                     ]);
 
                     break;
@@ -140,11 +142,11 @@ class Factory extends Manager
                     $card = $invoice->getCard();
                     if ($card) {
                         $newCard = new CardToken([
-                            'card'=>$card->getCard(),
-                            'token'=>$card->getToken(),
-                            'data'=>$card->getData(),
-                            'client'=>$transaction->client,
-                            'driver'=>$transaction->driver
+                            'card' => $card->getCard(),
+                            'token' => $card->getToken(),
+                            'data' => $card->getData(),
+                            'client' => $transaction->client,
+                            'driver' => $transaction->driver,
                         ]);
                         $newCard->save();
                         $transaction->card()->associate($newCard);
@@ -153,21 +155,27 @@ class Factory extends Manager
                     $transaction->update([
                         'status' => Transaction::STATUS_SUCCESSFUL,
                         'invoice' => $invoice->getInvoice(),
-                        'processed_at' => new DateTime('now')
+                        'processed_at' => new DateTime('now'),
                     ]);
                     break;
-                case 'reversed':
-                case 'refund':
-                    $trans = new Transaction();
+                case InvoiceInterface::STATUS_REFUND:
+                    if ($transaction->status === Transaction::STATUS_REFUND) {
+                        return;
+                    }
+                    $trans = $transaction->replicate();
                     $trans->parent()->associate($transaction);
-                    $trans->order()->associate($transaction->order);
                     $trans->fill([
-                        'type' => Transaction::TYPE_PAYMENT,
+                        'driver' => $transaction->driver,
+                        'type' => Transaction::TYPE_REFUND,
                         'status' => Transaction::STATUS_REFUND,
+                        'amount' => -$invoice->getAmount(),
                         'invoice' => $invoice->getInvoice(),
-                        'processed_at' => new DateTime('now')
+                        'processed_at' => new DateTime('now'),
                     ]);
                     $trans->save();
+                    $transaction->update([
+                        'status' => Transaction::STATUS_REFUND,
+                    ]);
                     $transaction = $trans;
                     break;
 //                case 'subscribed':
