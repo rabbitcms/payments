@@ -37,6 +37,11 @@ interface InvoiceInterface extends ContinuableInterface
     public function getAmount(): float;
 
     /**
+     * @return float
+     */
+    public function getCommission(): float;
+
+    /**
      * @return string
      */
     public function getTransactionId(): string;

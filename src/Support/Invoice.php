@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace RabbitCMS\Payments\Support;
@@ -50,14 +51,20 @@ class Invoice implements InvoiceInterface
     protected $card;
 
     /**
+     * @var float|int
+     */
+    private $commission;
+
+    /**
      * Invoice constructor.
      *
-     * @param PaymentProviderInterface $provider
-     * @param string                   $invoice
-     * @param string                   $transactionId
-     * @param int                      $type
-     * @param int                      $status
-     * @param float                    $amount
+     * @param  PaymentProviderInterface  $provider
+     * @param  string  $invoice
+     * @param  string  $transactionId
+     * @param  int  $type
+     * @param  int  $status
+     * @param  float  $amount
+     * @param  float  $commission
      */
     public function __construct(
         PaymentProviderInterface $provider,
@@ -65,14 +72,17 @@ class Invoice implements InvoiceInterface
         string $transactionId,
         int $type,
         int $status,
-        float $amount
-    ) {
+        float $amount,
+        float $commission = 0
+    )
+    {
         $this->provider = $provider;
         $this->invoice = $invoice;
         $this->transactionId = $transactionId;
         $this->amount = $amount;
         $this->type = $type;
         $this->status = $status;
+        $this->commission = $commission;
     }
 
     /**
@@ -89,6 +99,11 @@ class Invoice implements InvoiceInterface
     public function getAmount(): float
     {
         return $this->amount;
+    }
+
+    public function getCommission(): float
+    {
+        return $this->commission;
     }
 
     /**
@@ -124,24 +139,26 @@ class Invoice implements InvoiceInterface
     }
 
     /**
-     * @param int $type
+     * @param  int  $type
      *
      * @return Invoice
      */
     public function setType(int $type): Invoice
     {
         $this->type = $type;
+
         return $this;
     }
 
     /**
-     * @param int $status
+     * @param  int  $status
      *
      * @return Invoice
      */
     public function setStatus(int $status): Invoice
     {
         $this->status = $status;
+
         return $this;
     }
 
@@ -154,13 +171,14 @@ class Invoice implements InvoiceInterface
     }
 
     /**
-     * @param null|CardTokenInterface $card
+     * @param  null|CardTokenInterface  $card
      *
      * @return Invoice
      */
     public function setCard(CardTokenInterface $card): Invoice
     {
         $this->card = $card;
+
         return $this;
     }
 }

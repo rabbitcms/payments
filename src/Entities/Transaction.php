@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace RabbitCMS\Payments\Entities;
@@ -17,20 +18,21 @@ use RabbitCMS\Payments\Facade\Payments;
  * Class Transaction
  *
  * @package RabbitCMS\Payments\Entities
- * @property-read int              $id
- * @property-read string           $driver
- * @property-read string           $client
- * @property-read int              $status
- * @property-read int              $type
- * @property-read int              $parent_id
+ * @property-read int $id
+ * @property-read string $driver
+ * @property-read string $client
+ * @property-read int $status
+ * @property-read int $type
+ * @property-read int $parent_id
  * @property-read Transaction|null $parent
- * @property-read OrderInterface   $order
- * @property-read string           $invoice
- * @property-read float            $amount
- * @property-read array            $options
- * @property-read Carbon|null      $processed_at
- * @property-read int|null         $card_id
- * @property-read CardToken|null   $card
+ * @property-read OrderInterface $order
+ * @property-read string $invoice
+ * @property-read float $amount
+ * @property-read float $commission
+ * @property-read array $options
+ * @property-read Carbon|null $processed_at
+ * @property-read int|null $card_id
+ * @property-read CardToken|null $card
  */
 class Transaction extends Model implements TransactionInterface
 {
@@ -45,6 +47,7 @@ class Transaction extends Model implements TransactionInterface
         'invoice',
         'processed_at',
         'options',
+        'commission',
     ];
 
     protected $casts = [
@@ -55,109 +58,75 @@ class Transaction extends Model implements TransactionInterface
     ];
 
     protected $attributes = [
-        'status' => self::STATUS_PENDING
+        'status' => self::STATUS_PENDING,
     ];
 
-    /**
-     * @return MorphTo
-     */
     public function order(): MorphTo
     {
         return $this->morphTo('order');
     }
 
-    /**
-     * @return BelongsTo
-     */
     public function parent(): BelongsTo
     {
         return $this->belongsTo(self::class, 'parent_id');
     }
 
-    /**
-     * @return BelongsTo
-     */
     public function card(): BelongsTo
     {
         return $this->belongsTo(CardToken::class, 'card_id');
     }
 
-    /**
-     * @return int
-     */
     public function getStatus(): int
     {
         return $this->status;
     }
 
-    /**
-     * @return OrderInterface
-     */
     public function getOrder(): OrderInterface
     {
         return $this->order()->getResults();
     }
 
-    /**
-     * @return array
-     */
     public function getOptions(): array
     {
         return $this->options ?? [];
     }
 
-    /**
-     * @return int
-     */
     public function getType(): int
     {
         return $this->type;
     }
 
-    /**
-     * @return string
-     */
     public function getInvoice(): string
     {
-        return (string)$this->invoice;
+        return (string) $this->invoice;
     }
 
-    /**
-     * @return float
-     */
     public function getAmount(): float
     {
         return $this->amount;
     }
 
-    /**
-     * @return string
-     */
-    public function getTransactionId(): string
+    public function getCommission(): float
     {
-        return (string)$this->id;
+        return $this->commission;
     }
 
-    /**
-     * @return PaymentProviderInterface
-     */
+    public function getTransactionId(): string
+    {
+        return (string) $this->id;
+    }
+
     public function getProvider(): PaymentProviderInterface
     {
         return Payments::driver($this->driver);
     }
 
-    /**
-     * @return int|null
-     */
     public function getCardId()
     {
         return $this->card_id;
     }
 
-    /**
-     * @return CardTokenInterface|null
-     */
-    public function getCard()
+    public function getCard():?CardTokenInterface
     {
         return $this->card;
     }
