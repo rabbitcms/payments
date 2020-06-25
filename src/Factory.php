@@ -156,6 +156,7 @@ class Factory extends Manager
                         'status' => Transaction::STATUS_SUCCESSFUL,
                         'invoice' => $invoice->getInvoice(),
                         'processed_at' => new DateTime('now'),
+                        'commission' => $invoice->getCommission(),
                     ]);
                     break;
                 case InvoiceInterface::STATUS_REFUND:

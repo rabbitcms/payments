@@ -54,6 +54,7 @@ class Transaction extends Model implements TransactionInterface
         'status' => 'int',
         'type' => 'int',
         'amount' => 'float',
+        'commission' => 'float',
         'options' => 'array',
     ];
 
