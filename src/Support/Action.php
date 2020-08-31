@@ -3,7 +3,6 @@ declare(strict_types=1);
 
 namespace RabbitCMS\Payments\Support;
 
-use Laravel\Socialite\Two\ProviderInterface;
 use RabbitCMS\Payments\Contracts\ActionInterface;
 use RabbitCMS\Payments\Contracts\PaymentProviderInterface;
 
@@ -15,7 +14,7 @@ use RabbitCMS\Payments\Contracts\PaymentProviderInterface;
 class Action implements ActionInterface
 {
     /**
-     * @var ProviderInterface
+     * @var PaymentProviderInterface
      */
     protected $provider;
 

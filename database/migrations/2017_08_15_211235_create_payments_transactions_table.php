@@ -25,7 +25,9 @@ class CreatePaymentsTransactionsTable extends Migration
             $table->unsignedTinyInteger('type');
             $table->unsignedInteger('card_id')->nullable();
             $table->unsignedInteger('parent_id')->nullable();
-            $table->morphs('order');
+            $table->string("order_type")->charset('latin1');
+            $table->unsignedBigInteger("order_id");
+            $table->index(["order_type", "order_id"]);
             $table->decimal('amount', 16, 8);
             $table->string('invoice')->nullable();
             $table->timestamp('processed_at')->nullable();
