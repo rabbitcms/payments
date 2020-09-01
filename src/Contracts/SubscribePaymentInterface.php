@@ -10,7 +10,7 @@ use DateTimeInterface;
  *
  * @package RabbitCMS\Payments\Contracts
  */
-interface SubscribePaymentInterface extends PaymentProviderInterface
+interface SubscribePaymentInterface extends PaymentInterface
 {
     const PERIODICITY_CUSTOM = 0;
     const PERIODICITY_MONTH = 1;

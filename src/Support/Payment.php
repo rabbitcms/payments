@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace RabbitCMS\Payments\Support;
@@ -63,10 +64,10 @@ class Payment implements PaymentInterface
     /**
      * Payment constructor.
      *
-     * @param string $currency
-     * @param float  $amount
-     * @param string $description
-     * @param Client $client
+     * @param  string  $currency
+     * @param  float  $amount
+     * @param  string  $description
+     * @param  Client  $client
      */
     public function __construct(string $currency, float $amount, string $description, Client $client)
     {
@@ -138,46 +139,50 @@ class Payment implements PaymentInterface
     }
 
     /**
-     * @param ProductInterface $product
+     * @param  ProductInterface  $product
      *
      * @return Payment
      */
     public function setProduct(ProductInterface $product): Payment
     {
         $this->product = $product;
+
         return $this;
     }
 
     /**
-     * @param DateTimeInterface $expired
+     * @param  DateTimeInterface  $expired
      *
      * @return Payment
      */
     public function setExpired(DateTimeInterface $expired): Payment
     {
         $this->expired = $expired;
+
         return $this;
     }
 
     /**
-     * @param string $language
+     * @param  string  $language
      *
      * @return Payment
      */
     public function setLanguage(string $language): Payment
     {
         $this->language = $language;
+
         return $this;
     }
 
     /**
-     * @param string $returnUrl
+     * @param  string  $returnUrl
      *
      * @return Payment
      */
     public function setReturnUrl(string $returnUrl): Payment
     {
         $this->returnUrl = $returnUrl;
+
         return $this;
     }
 
@@ -200,13 +205,14 @@ class Payment implements PaymentInterface
     }
 
     /**
-     * @param int $cardId
+     * @param  int  $cardId
      *
      * @return Payment
      */
     public function setCardId(int $cardId): Payment
     {
         $this->cardId = $cardId;
+
         return $this;
     }
 }

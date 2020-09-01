@@ -11,16 +11,17 @@ namespace RabbitCMS\Payments\Contracts;
  */
 interface InvoiceInterface extends ContinuableInterface
 {
-    const TYPE_PAYMENT = 1;
-    const TYPE_REFUND = 2;
+    public const TYPE_PAYMENT = 1;
+    public const TYPE_REFUND = 2;
+    public const TYPE_SUBSCRIPTION = 3;
 
-    const STATUS_PENDING = 0;
-    const STATUS_SUCCESSFUL = 1;
-    const STATUS_REFUND = 2;
+    public const STATUS_PENDING = 0;
+    public const STATUS_SUCCESSFUL = 1;
+    public const STATUS_REFUND = 2;
 
-    const STATUS_FAILURE = 127;
-    const STATUS_CANCELED = 128;
-    const STATUS_UNKNOWN = 255;
+    public const STATUS_FAILURE = 127;
+    public const STATUS_CANCELED = 128;
+    public const STATUS_UNKNOWN = 255;
 
     /**
      * @return int
