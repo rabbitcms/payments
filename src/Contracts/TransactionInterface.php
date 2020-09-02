@@ -21,4 +21,6 @@ interface TransactionInterface extends InvoiceInterface
      * @return array
      */
     public function getOptions(): array;
+
+    public function getDateTime():\DateTimeInterface;
 }

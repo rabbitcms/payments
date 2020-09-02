@@ -99,6 +99,7 @@ class Factory extends Manager
         /* @var Transaction $transaction */
         $transaction = Transaction::query()
             ->where('driver', $invoice->getProvider()->getShop())
+            ->whereNull('parent_id')
             ->findOrFail($invoice->getTransactionId());
 
         $transaction->getConnection()->transaction(function () use ($invoice, $transaction) {
@@ -115,8 +116,52 @@ class Factory extends Manager
                     ]);
 
                     break;
+                case InvoiceInterface::STATUS_CANCELED:
+                    if ($transaction->type === Transaction::TYPE_SUBSCRIPTION) {
+                        $transaction->update([
+                            'status' => Transaction::STATUS_CANCELED,
+                            'invoice' => $invoice->getInvoice(),
+                            'processed_at' => new DateTime('now'),
+                            'amount' => 0,
+                            'commission' => 0,
+                        ]);
+                        break;
+                    }
+                    return;
                 case InvoiceInterface::STATUS_SUCCESSFUL:
-//                    if ($transaction->type === Transaction::TYPE_SUBSCRIBE) {
+                    if ($transaction->type === Transaction::TYPE_SUBSCRIPTION) {
+                        if ($invoice->getType() === Transaction::TYPE_SUBSCRIPTION) {
+                            if ($transaction->status === Transaction::STATUS_SUCCESSFUL) {
+                                return;
+                            }
+                            $transaction->update([
+                                'status' => Transaction::STATUS_SUCCESSFUL,
+                                'invoice' => $invoice->getInvoice(),
+                                'processed_at' => new DateTime('now'),
+                                'amount' => 0,
+                                'commission' => 0,
+                            ]);
+                            break;
+                        }
+
+                        if ($transaction->children()->where('invoice', $invoice->getInvoice())->exists()) {
+                            return;
+                        }
+
+                        $trans = $transaction->replicate();
+                        $trans->parent()->associate($transaction);
+                        $trans->fill([
+                            'driver' => $transaction->driver,
+                            'type' => Transaction::TYPE_PAYMENT,
+                            'status' => Transaction::STATUS_SUCCESSFUL,
+                            'amount' => $invoice->getAmount(),
+                            'commission' => $invoice->getCommission(),
+                            'invoice' => $invoice->getInvoice(),
+                            'processed_at' => new DateTime('now'),
+                        ]);
+                        $trans->save();
+                        $transaction = $trans;
+
 //                        $trans = Transaction::query()->where(['invoice' => $params['payment_id']])->first();
 //                        if ($trans !== null) {
 //                            //Already exists.
@@ -133,8 +178,8 @@ class Factory extends Manager
 //                        ]);
 //                        $trans->save();
 //                        $transaction = $trans;
-//                        break;
-//                    }
+                        break;
+                    }
                     if ($transaction->status === Transaction::STATUS_SUCCESSFUL) {
                         return;
                     }

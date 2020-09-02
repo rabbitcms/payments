@@ -5,8 +5,10 @@ declare(strict_types=1);
 namespace RabbitCMS\Payments\Entities;
 
 use Carbon\Carbon;
+use DateTimeInterface;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\MorphTo;
 use RabbitCMS\Payments\Contracts\CardTokenInterface;
 use RabbitCMS\Payments\Contracts\OrderInterface;
@@ -23,7 +25,7 @@ use RabbitCMS\Payments\Facade\Payments;
  * @property-read string $client
  * @property-read int $status
  * @property-read int $type
- * @property-read int $parent_id
+ * @property-read int|null $parent_id
  * @property-read Transaction|null $parent
  * @property-read OrderInterface $order
  * @property-read string $invoice
@@ -70,6 +72,11 @@ class Transaction extends Model implements TransactionInterface
     public function parent(): BelongsTo
     {
         return $this->belongsTo(self::class, 'parent_id');
+    }
+
+    public function children(): HasMany
+    {
+        return $this->hasMany(self::class, 'parent_id');
     }
 
     public function card(): BelongsTo
@@ -127,8 +134,13 @@ class Transaction extends Model implements TransactionInterface
         return $this->card_id;
     }
 
-    public function getCard():?CardTokenInterface
+    public function getCard(): ?CardTokenInterface
     {
         return $this->card;
+    }
+
+    public function getDateTime(): DateTimeInterface
+    {
+        return $this->processed_at;
     }
 }
