@@ -13,6 +13,7 @@ use RabbitCMS\Payments\Contracts\SubscribeOrderInterface;
 use RabbitCMS\Payments\Contracts\TransactionInterface;
 use RabbitCMS\Payments\Entities\Transaction;
 use RabbitCMS\Payments\Factory;
+use RuntimeException;
 
 /**
  * Trait PaymentProvider
@@ -93,5 +94,10 @@ trait PaymentProvider
         $transaction->save();
 
         return $transaction;
+    }
+
+    public function unsubscribe(OrderInterface $order): bool
+    {
+        throw new RuntimeException('Not implemented');
     }
 }

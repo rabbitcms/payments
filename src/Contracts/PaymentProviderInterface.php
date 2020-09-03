@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace RabbitCMS\Payments\Contracts;
@@ -25,16 +26,16 @@ interface PaymentProviderInterface extends LoggerAwareInterface
     public function getShop(): string;
 
     /**
-     * @param OrderInterface $order
-     * @param callable|null  $callback
-     * @param array          $options
+     * @param  OrderInterface  $order
+     * @param  callable|null  $callback
+     * @param  array  $options
      *
      * @return ContinuableInterface
      */
     public function createPayment(OrderInterface $order, callable $callback = null, array $options = []): ContinuableInterface;
 
     /**
-     * @param ServerRequestInterface $request
+     * @param  ServerRequestInterface  $request
      *
      * @return ResponseInterface
      */
@@ -44,4 +45,6 @@ interface PaymentProviderInterface extends LoggerAwareInterface
      * @return bool
      */
     public function isValid(): bool;
+
+    public function unsubscribe(OrderInterface $order): bool;
 }
