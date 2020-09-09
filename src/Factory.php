@@ -105,6 +105,25 @@ class Factory extends Manager
         $transaction->getConnection()->transaction(function () use ($invoice, $transaction) {
             switch ($invoice->getStatus()) {
                 case InvoiceInterface::STATUS_FAILURE:
+                    if ($transaction->type === Transaction::TYPE_SUBSCRIPTION) {
+                        if ($transaction->children()->where('invoice', $invoice->getInvoice())->exists()) {
+                            return;
+                        }
+                        $trans = $transaction->replicate();
+                        $trans->parent()->associate($transaction);
+                        $trans->fill([
+                            'driver' => $transaction->driver,
+                            'type' => Transaction::TYPE_PAYMENT,
+                            'status' => Transaction::STATUS_FAILURE,
+                            'amount' => $invoice->getAmount(),
+                            'commission' => $invoice->getCommission(),
+                            'invoice' => $invoice->getInvoice(),
+                            'processed_at' => new DateTime('now'),
+                        ]);
+                        $trans->save();
+                        $transaction = $trans;
+                        break;
+                    }
                     if ($transaction->status === Transaction::STATUS_FAILURE) {
                         return;
                     }
@@ -127,6 +146,7 @@ class Factory extends Manager
                         ]);
                         break;
                     }
+
                     return;
                 case InvoiceInterface::STATUS_SUCCESSFUL:
                     if ($transaction->type === Transaction::TYPE_SUBSCRIPTION) {
