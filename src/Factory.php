@@ -17,16 +17,10 @@ use DateTime;
 /**
  * Class Factory
  *
- * @package DtKt\Payments
  * @method PaymentProviderInterface driver($driver = null)
  */
 class Factory extends Manager
 {
-    /**
-     * Get the default driver name.
-     *
-     * @return string
-     */
     public function getDefaultDriver(): string
     {
         return 'default';
@@ -37,7 +31,15 @@ class Factory extends Manager
      */
     public function all(): array
     {
-        return array_keys(config('payments', []));
+        return array_keys($this->config->get('payments', []));
+    }
+
+    /**
+     * @return array<string,PaymentProviderInterface>
+     */
+    public function getProviders(): array
+    {
+        return array_map(fn(callable $creator) => $creator($this, []), $this->customCreators);
     }
 
     /**
@@ -51,10 +53,12 @@ class Factory extends Manager
      */
     protected function createDriver($driver)
     {
-        $config = config("payments.{$driver}", null);
+        $config = $this->config->get("payments.{$driver}", null);
+
         if (is_string($config)) {
             return $this->createDriver($config);
         }
+
         if ($config === null) {
             throw new InvalidArgumentException("Driver [$driver] not supported.");
         }
@@ -78,23 +82,12 @@ class Factory extends Manager
         throw new InvalidArgumentException("Provider [$provider] not supported.");
     }
 
-    /**
-     * Call a custom driver creator.
-     *
-     * @param  string  $provider
-     * @param  array  $config
-     *
-     * @return mixed
-     */
-    protected function callCustomCreator($provider, array $config = [])
+    public function callCustomCreator($provider, array $config = []): PaymentProviderInterface
     {
         return $this->customCreators[$provider]($this, $config);
     }
 
-    /**
-     * @param  InvoiceInterface  $invoice
-     */
-    public function process(InvoiceInterface $invoice)
+    public function process(InvoiceInterface $invoice): void
     {
         /* @var Transaction $transaction */
         $transaction = Transaction::query()
