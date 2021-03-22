@@ -6,11 +6,10 @@ namespace RabbitCMS\Payments;
 
 use DtKt\ServiceManager\ServiceManager;
 use Illuminate\Contracts\Container\Container;
-use Illuminate\Contracts\Support\DeferrableProvider;
 use Illuminate\Support\ServiceProvider;
 use RabbitCMS\Payments\ServiceManager\PaymentServiceProvider;
 
-class ModuleProvider extends ServiceProvider implements DeferrableProvider
+class ModuleProvider extends ServiceProvider
 {
     public function register(): void
     {
